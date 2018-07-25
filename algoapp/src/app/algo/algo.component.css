@@ -1,0 +1,44 @@
+
+.algo-view{
+    width: 75%;
+    margin-left: 1%;
+    float: left;
+}
+
+
+.algo-view h2{
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.algo-view .canvas-wrp{
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+
+.algo-view .algo-raster{
+    padding: 5px;
+    border: 1px solid #000;
+}
+
+.play-actns{
+    width: 100%;
+}
+
+.play-actns .btn-list{
+    display: flex;
+    flex-direction: row;
+    padding: 0px;
+    margin: 0px;
+}
+
+.play-actns .btn-list li{
+    padding: 2px;
+    list-style: none;
+    border: 1px solid #000;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 2px;
+    font-size: 20px;
+}

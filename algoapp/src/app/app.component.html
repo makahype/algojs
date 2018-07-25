@@ -1,0 +1,18 @@
+<h1>
+{{ title }}
+</h1>
+
+<section class="algo-optns">
+    <div class="title">
+        Algorithm
+    </div>
+    <ul>        
+      <li *ngFor="let algo of algos">
+        {{algo.name}}
+      </li>
+    </ul>    
+</section>
+
+<app-algo>
+</app-algo>
+

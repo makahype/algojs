@@ -7,17 +7,23 @@ import { Algo } from './algo';
 
 var test = function(data){
 
-    var val = data.input;
-    if(!data.curr) {
-        data.curr = 0
+    var res = {};
+
+    if(data.curr != 0 && !data.curr) {
+        res.curr = 0;
     } else {
-        data.curr = data.curr + 1;
+        res.curr = data.curr + 1;
     }
+    
+    res.input = [];
+    data.input.forEach(function(item,idx){
+        res.input.push(item);
+    });
 
-    data.input[data.curr] = data.input[data.curr] + 2; 
-    data.show = [data.input];
+    res.input[res.curr] = res.input[res.curr] + 2;
+    res.show = [res.input];
 
-    return data;
+    return res;
 }
 
 

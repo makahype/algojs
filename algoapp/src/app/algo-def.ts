@@ -5,22 +5,23 @@ import { Algo } from './algo';
 
 /* define  algo functions here */
 
-var test = function(step,data){
+var test = function(data){
 
-    var res = data;
-    for(var i=0; i < data.length; i++){
-        
-        res[i] = data[i] + 2;
-        if((step-1) == i){
-            return res;
-        }
-
+    var val = data.input;
+    if(!data.curr) {
+        data.curr = 0
+    } else {
+        data.curr = data.curr + 1;
     }
 
+    data.input[data.curr] = data.input[data.curr] + 2; 
+    data.show = [data.input];
+
+    return data;
 }
 
 
-var quicksort = function(step,data){
+var quicksort = function(data){
     console.log('test');
 }
 
@@ -28,6 +29,6 @@ var quicksort = function(step,data){
 
 
 export const ALGOS: Algo[] = [
-    {id: 1 , name: "Add two", process: test, current:[2,4]},
-    {id: 2 , name: "Quick Sort", process: quicksort, current:[2,4]},
+    new Algo(1 ,"Add two",test, {input: [2,4]}),
+    new Algo( 2 , "Quick Sort", quicksort, {input: [2,4]}),
 ];

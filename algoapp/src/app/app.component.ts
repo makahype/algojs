@@ -12,12 +12,5 @@ export class AppComponent {
 
   constructor (private algoService: AlgoService) {
     this.algos = algoService.getAlgos();
-
-
-    console.log(this.algos);
-
-    //this.algos[0].showCurrent();
-    //this.algos[0].next();
-    //this.algos[0].showCurrent();
   }
 }

@@ -40,3 +40,8 @@ h1 {
     font-size: 20px;
     cursor: pointer;
 }
+
+.algo-optns ul li.selected{
+    background-color: orange;
+    
+}

@@ -24,8 +24,11 @@ export class Algo {
     this.visualize();
   }
 
+  clear(){
+    this.steps = [];
+  }
+
   visualize() {
-    console.log(this.steps);
 
     var canvas = document.getElementById("algo_raster");
     var ctx = canvas.getContext("2d");
@@ -44,13 +47,13 @@ export class Algo {
     var section = 0;
 
     if(this.steps.length >= 2){
-        
-        var step1 = this.steps[this.steps.length - 2];        
+
+        var step1 = this.steps[this.steps.length - 2];
         var show = step1.show;
         ctx.fillText("step "+(this.steps.length-1),10,30);
 
         var line = 1;
-        show.forEach(function(item){            
+        show.forEach(function(item){
             ctx.fillText(item,10,30+line * 30);
             line++;
         });

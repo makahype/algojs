@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Algo } from './algo';
 import { AlgoService } from './algo.service';
 
 @Component({
@@ -6,11 +7,29 @@ import { AlgoService } from './algo.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
+
 export class AppComponent {
   title = 'Algo Visualize App';
-  algos = [];
+  algos : Algo[];
+  selectedAlgo : Algo;
 
-  constructor (private algoService: AlgoService) {
-    this.algos = algoService.getAlgos();
+  constructor (private algoService: AlgoService) {  }
+
+  ngOnInit() {
+        this.getAlgos();
+        this.selectedAlgo = this.algos[0];
   }
+
+  selectAlgo(algo: Algo): void{
+    algo.clear();
+    this.selectedAlgo = algo;
+  }
+
+  getAlgos(): void{
+
+    this.algoService.getAlgos()
+        .subscribe(algos => this.algos = algos);
+  }
+
+
 }

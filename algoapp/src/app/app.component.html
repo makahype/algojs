@@ -7,12 +7,15 @@
         Algorithm
     </div>
     <ul>        
-      <li *ngFor="let algo of algos">
+      <li *ngFor="let algo of algos; let i = index" 
+          [class.selected]="algo === selectedAlgo"
+          (click)="selectAlgo(algo)"
+          >
         {{algo.name}}
       </li>
     </ul>    
 </section>
 
-<app-algo>
+<app-algo [algo] = "selectedAlgo">
 </app-algo>
 

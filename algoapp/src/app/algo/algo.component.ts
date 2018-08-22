@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { AlgoService } from '../algo.service';
+import { Component, OnInit, Input } from '@angular/core';
+import { Algo } from '../algo';
+
 
 @Component({
   selector: 'app-algo',
@@ -7,17 +8,20 @@ import { AlgoService } from '../algo.service';
   styleUrls: ['./algo.component.css']
 })
 export class AlgoComponent implements OnInit {
-  Algo: algo;
+  @Input() algo: Algo;
   choice = 0;
   speed = 5000;
   playHandle = null;
+  algos = [];
 
-  constructor(private algoService: AlgoService) { 
-    var algos = algoService.getAlgos();
-    this.algo = algos[0];
+  constructor() {
   }
 
-  ngOnInit() {
+  ngOnInit(){
+  }
+
+  ngOnChanges(){
+    this.algo.next();
   }
 
   displayAlgo() {
@@ -45,11 +49,6 @@ export class AlgoComponent implements OnInit {
 
   stop(){
     clearTimeout(this.playHandle);
-  }
-
-
-  ngAfterViewInit() {
-      this.displayAlgo();
   }
   
 

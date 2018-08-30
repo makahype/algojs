@@ -20,13 +20,10 @@ h1 {
     width: 20%;
 }
 
-
 .algo-optns .title{
     font-size: 30px;
-    color: aquamarine;
+    color: #000;
 }
-
-
 
 .algo-optns ul{
     padding: 0px;
@@ -39,9 +36,12 @@ h1 {
     margin: 0px;
     font-size: 20px;
     cursor: pointer;
+    color: #555;
+    padding: 3px;
+    margin-top: 5px;
 }
 
 .algo-optns ul li.selected{
-    background-color: orange;
-    
+    background-color: #55AA55;  
+    color: #FFF;
 }

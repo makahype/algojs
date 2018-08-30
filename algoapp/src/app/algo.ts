@@ -10,16 +10,20 @@ export class Algo {
     this.name = name;
     this.process = process;
     this.start = start;
+
   }
 
   next() {
-    var last = this.start;
+
     if(this.steps.length > 0){
-        last = this.steps[this.steps.length - 1];
+        var last = this.steps[this.steps.length - 1];
+    }else{
+        var last = this.start;
     }
 
     var res = this.process(last);
     this.steps.push(res);
+
 
     this.visualize();
   }
@@ -54,7 +58,19 @@ export class Algo {
 
         var line = 1;
         show.forEach(function(item){
+
+            //assign options if set
+            if(item.color){
+
+                ctx.fillStyle =item.color;
+                item = item.val;
+            }
+
+
             ctx.fillText(item,10,30+line * 30);
+
+            //reset
+            ctx.fillStyle ='black';
             line++;
         });
 
@@ -68,8 +84,17 @@ export class Algo {
     ctx.fillText("step "+this.steps.length,10,(section * 200)+30);
 
     var line = 1;
-    show.forEach(function(item){            
+    show.forEach(function(item){
+
+        //assign options if set
+        if(item.color){
+            ctx.fillStyle = item.color;
+            item = item.val;
+        }
+        
         ctx.fillText(item,10,(line * 30)+(section * 200)+30);
+
+        ctx.fillStyle = 'black';
         line++;
     });
 

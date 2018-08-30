@@ -10,9 +10,9 @@ import { Algo } from '../algo';
 export class AlgoComponent implements OnInit {
   @Input() algo: Algo;
   choice = 0;
-  speed = 5000;
+  speed = 5;
   playHandle = null;
-  algos = [];
+  playMode = false;
 
   constructor() {
   }
@@ -21,22 +21,22 @@ export class AlgoComponent implements OnInit {
   }
 
   ngOnChanges(){
+    this.algo.clear();
     this.algo.next();
   }
 
-  displayAlgo() {
-    this.algo.next();
-  }
 
   next(){
    this.algo.next();
   }
 
   speedup(){
-    this.speed = this.speed/2;
+    var speed_obj = {5: 3, 3: 1, 1: 5};
+    this.speed = speed_obj[this.speed];
   }
 
   play(){
+        this.playMode = true;
         this.algo.next();
         var scope = this;
 
@@ -44,10 +44,11 @@ export class AlgoComponent implements OnInit {
         var scopePlay = function(){
             scope.play();
         }
-        this.playHandle = setTimeout(scopePlay, this.speed);
+        this.playHandle = setTimeout(scopePlay, (this.speed*1000));
   }
 
   stop(){
+    this.playMode = false;
     clearTimeout(this.playHandle);
   }
   

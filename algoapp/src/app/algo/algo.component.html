@@ -11,11 +11,11 @@
 
     <section class="play-actns">
         <ul class="btn-list">
-            <li (click)="play()">
+            <li [class.on]="playMode" (click)="play()">
                 play
             </li>
             <li (click)="speedup()">
-                speed: 5s
+                speed: {{speed}}s
             </li>
             <li (click)="stop()">
                 stop

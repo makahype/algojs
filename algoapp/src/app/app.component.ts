@@ -21,7 +21,6 @@ export class AppComponent {
   }
 
   selectAlgo(algo: Algo): void{
-    algo.clear();
     this.selectedAlgo = algo;
   }
 

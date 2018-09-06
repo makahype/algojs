@@ -25,7 +25,6 @@ export class AppComponent {
   }
 
   getAlgos(): void{
-
     this.algoService.getAlgos()
         .subscribe(algos => this.algos = algos);
   }

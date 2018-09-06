@@ -1,75 +1,86 @@
 
-export function quicksort(data){
 
+var quicksort_graph = function(data){
+    //** todo represent list of numbers as sequence of circles**//
+    //display current order of all partitions
+    return {dots:[], lines:[]};
+}
+
+export function quicksort(data){
     
     //deep cloning arrays of arrays to remove reference
-    var arr = [];
+    var partitions = [];
     for(var i=0; i < data.input.length; i++){
-        arr.push(data.input[i].concat([]));
+        partitions.push(data.input[i].concat([]));
     }
 
-
+    
     var res_arr = [];
-    for(var i = 0; i < arr.length; i++){
+    for(var i = 0; i < partitions.length; i++){
 
-        if(arr[i].length > 1){
+        //no need to step through array if it only has 
+        //one value
+        if(partitions[i].length > 1){
+            if(partitions[i].length == 2){
+                
+                //seems that below process will not work for
+                //array of length two , should try to implement
+                // more general solution
+                if(partitions[i][0] > partitions[i][1]){
 
-            if(arr[i].length == 2){
-
-                if(arr[i][0] > arr[i][1]){
-
-                    var hold = arr[i][0];
-                    arr[i][0] = arr[i][1];
-                    arr[i][1] = hold;
+                    var hold = partitions[i][0];
+                    partitions[i][0] = partitions[i][1];
+                    partitions[i][1] = hold;
                 }
 
-                res_arr.push(arr[i]);
+                res_arr.push(partitions[i]);
 
             }else{
 
-                var pivot = arr[i][0];
-                var arr_len = arr[i].length;
-
+                //first in array is the pivot point
+                var pivot = partitions[i][0];
+                var arr_len = partitions[i].length;
                 var leftmark = 1;
                 var rightmark = arr_len - 1;
+                var creating_partition = true;
 
                 //move the pointers
-                var creating_partition = true;
                 while(creating_partition){
 
-                    while(leftmark <= rightmark && arr[i][leftmark] <= pivot){
+                    //condition for comparing and moving markers
+                    while(leftmark <= rightmark && partitions[i][leftmark] <= pivot){
                         leftmark = leftmark + 1;
                     }
 
-                    while(arr[i][rightmark] >= pivot && rightmark >= leftmark){
+                    while(partitions[i][rightmark] >= pivot && rightmark >= leftmark){
                         rightmark = rightmark - 1;
                     }
 
-
+                    //if marks cross then end process
                     if(rightmark < leftmark){
 
                         creating_partition = false;
 
                         //place pivot in correct location
-                        arr[i][0] = arr[i][rightmark];
-                        arr[i][rightmark] = pivot;
+                        partitions[i][0] = partitions[i][rightmark];
+                        partitions[i][rightmark] = pivot;
 
                     }else{
-
-                        var hold = arr[i][leftmark];
-                        arr[i][leftmark] = arr[i][rightmark];
-                        arr[i][rightmark] = hold;
+                        //swap based on above comparison
+                        var hold = partitions[i][leftmark];
+                        partitions[i][leftmark] = partitions[i][rightmark];
+                        partitions[i][rightmark] = hold;
 
                     }
                 }
 
                 //prepare for next partitioning
-                res_arr.push(arr[i].slice(0, rightmark));
-                res_arr.push([arr[i][rightmark]]);
-                res_arr.push(arr[i].slice(rightmark+1));
+                res_arr.push(partitions[i].slice(0, rightmark));
+                res_arr.push([partitions[i][rightmark]]);
+                res_arr.push(partitions[i].slice(rightmark+1));
             }
         }else{
-           res_arr.push(arr[i]);        
+           res_arr.push(partitions[i]);        
         }
     }
 
@@ -89,14 +100,14 @@ export function quicksort(data){
     });
     var pivot_point = Math.floor(show_arr.length/2);
 
+    res.graph = quicksort_graph(res.input);
 
-
-
+    //always display current middle number as global pivot point
     res.show = [];
     res.show.push(show_arr.slice(0, pivot_point));
     res.show.push({color: 'green', val: show_arr[pivot_point]});
     res.show.push(show_arr.slice(pivot_point+1));
-
-
+    
+    //return current state
     return res;
 }

@@ -35,6 +35,7 @@ export class AlgoComponent implements OnInit {
     this.speed = speed_obj[this.speed];
   }
 
+  //automate display of steps based on speed
   play(){
         this.playMode = true;
         this.algo.next();

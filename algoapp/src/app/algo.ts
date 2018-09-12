@@ -137,20 +137,24 @@ export class Algo {
 
     var dots = this.steps[this.steps.length - 1].graph.dots;
     for(var d = 0; d < dots.length; d++){
-        
         ctx.beginPath();
+        ctx.fillStyle = dots[d].color;        
         ctx.arc(dots[d].x,dots[d].y,dots[d].size,0,2*Math.PI);
         ctx.fill();
-        ctx.fillStyle = dots[d].color;
+        ctx.closePath();
     }
 
+    //fixes canvas style applying bug
+    ctx.beginPath();
+    ctx.closePath();
+
     var squares = this.steps[this.steps.length - 1].graph.squares;
-    for(var s = 0; s < squares.length; s++){
-        
+    for(var s = 0; s < squares.length; s++){        
         ctx.fillStyle = squares[s].color;
         ctx.rect(squares[s].x,squares[s].y,squares[s].size,squares[s].size);
         ctx.fill();
     }
+
 
 
   }

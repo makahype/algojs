@@ -1,22 +1,30 @@
 var astar_graph = function(data){
 
-    var columns = 7;
-    var rows = 7;
+    var columns = 14;
+    var rows = 14;
 
     var lines = [];
 
     //setup grid as lines
-    for(var c = 0; c < columns; c++){
-        lines.push({to:{x: 400+ (c * 40), y: 50},
-            from: {x: 400+ (c * 40), y: 350}});
+    for(var c = 0; c <= columns; c++){
+        lines.push({to:{x: 400+ (c * 20), y: 50},
+            from: {x: 400+ (c * 20), y: 330}});
     }
 
-    for(var r = 0; r < rows; r++){
-        lines.push({to:{x: 400, y: 50 + (r * 40)},
-            from: {x: 680, y: 50 + (r * 40)}});
+    for(var r = 0; r <= rows; r++){
+        lines.push({to:{x: 400, y: 50 + (r * 20)},
+            from: {x: 680, y: 50 + (r * 20)}});
     }
 
-    return {dots:[], lines:lines, squares:[]};
+
+    var dots = [];
+    data.forEach(function(item){
+        dots.push({x: (410 + (item.col*20)), y: ( 60 + (item.row*20)), size: 8, color: 'black'});
+    });
+    
+
+
+    return {dots:dots, lines:lines, squares:[]};
 }
 
 //build path
@@ -65,8 +73,8 @@ var isInSet = function(set, item){
 //get cells next to this cell
 var getNeighbors = function(cell){
     //set default rows and columns
-    var columns = 10;
-    var rows = 8;
+    var columns = 14;
+    var rows = 14;
 
     var res = [];
     //create cell if in bounds then add to array
@@ -147,8 +155,8 @@ export function astar(data){
 
 
     //graph is a set of nodes and a set of verticies
-    var columns = 10;
-    var rows = 8;
+    var columns = 14;
+    var rows = 14;
     var obstacles = [[{row: 4, col: 7}, {row: 5, col:7}, {row: 6, col:7} ],
                 [{row: 5 , col:10},{row: 5, col:11}],
                 [{row: 2, col:4},{row: 2, col:5}]];
@@ -156,7 +164,7 @@ export function astar(data){
 
     var open = [];//data.input.open;
     var closed = [];//data.input.closed;
-    var goal = {row: 7, col: 9};
+    var goal = {row: 10, col: 12};
     var start = {row: 0, col: 0};
 
     var cameFrom = {};

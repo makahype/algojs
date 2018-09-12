@@ -128,13 +128,12 @@ export class Algo {
     //ctx.arc(450,100,50,0,2*Math.PI);
     //ctx.stroke();
 
-    //for(var d = 0; d < last_graph.dots.length; d++){
-    //}
-
-
+   
 
     var canvas = document.getElementById("algo_raster");
     var ctx = canvas.getContext("2d");
+
+    ctx.fillStyle = 'black';
 
     var lines = this.steps[this.steps.length - 1].graph.lines;
     console.log(lines);
@@ -148,6 +147,17 @@ export class Algo {
         ctx.stroke();
         
     }
+
+
+    var dots = this.steps[this.steps.length - 1].graph.dots;
+    for(var d = 0; d < dots.length; d++){
+        
+        ctx.fillStyle = dots[d].color;
+        ctx.beginPath();
+        ctx.arc(dots[d].x,dots[d].y,dots[d].size,0,2*Math.PI);
+        ctx.fill();
+    }
+
 
 
   }

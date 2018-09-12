@@ -23,8 +23,20 @@ var astar_graph = function(data){
     });
     
 
+    var obstacles = [];
+    obstacles.push({row: 3, col: 8});
+    obstacles.push({row: 4, col: 8});
+    obstacles.push({row: 5, col: 8});
+    obstacles.push({row: 6, col: 8});
 
-    return {dots:dots, lines:lines, squares:[]};
+
+    var squares = [];
+    obstacles.forEach(function(item){
+        squares.push({x: 401+(20*item.col), y: 51+(20*item.row), size: 17, color: 'red'});
+    });
+
+
+    return {dots:dots, lines:lines, squares:squares};
 }
 
 //build path
@@ -76,6 +88,14 @@ var getNeighbors = function(cell){
     var columns = 14;
     var rows = 14;
 
+    var obstacles = {};
+    obstacles['38']=true;
+    obstacles['48']=true;
+    obstacles['58']=true;
+    obstacles['68']=true;
+
+
+
     var res = [];
     //create cell if in bounds then add to array
     if(cell.row + 1 < rows){
@@ -111,7 +131,19 @@ var getNeighbors = function(cell){
         res.push({row: cell.row - 1, col: cell.col - 1});
     }
 
-    return res;
+    //remove obstacles
+    var no_obstacles = [];
+    res.forEach(function(item){
+        if(obstacles[item.row+""+item.col]){
+            //dont add it to the result 
+            //is a cell with an obstacle
+        }else{
+            no_obstacles.push(item);
+        }
+    });
+    
+
+    return no_obstacles;
 }
 
 //get the item with the lowest cost estimate to the goal

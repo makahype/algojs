@@ -62,6 +62,7 @@ export class Algo {
     ctx.lineTo(350,200);
     ctx.stroke();
     ctx.font = "20px Arial";
+    ctx.fillStyle = 'black';
 
     var line = 1;
     var section = 0;
@@ -118,27 +119,13 @@ export class Algo {
   //process to show visual representation of state
   showGraph(){
     
-    //**TODO** standardize visual api for graph representation
-    //of algorithm
-
-    //var last_graph = this.steps[this.steps.length-1].graph;
-    //var canvas = document.getElementById("algo_raster");
-    //var ctx = canvas.getContext("2d");
-    //ctx.beginPath();
-    //ctx.arc(450,100,50,0,2*Math.PI);
-    //ctx.stroke();
-
    
 
     var canvas = document.getElementById("algo_raster");
     var ctx = canvas.getContext("2d");
-
     ctx.fillStyle = 'black';
 
     var lines = this.steps[this.steps.length - 1].graph.lines;
-    console.log(lines);
-
-
     for(var l = 0; l < lines.length; l++){
 
         ctx.beginPath();
@@ -148,16 +135,22 @@ export class Algo {
         
     }
 
-
     var dots = this.steps[this.steps.length - 1].graph.dots;
     for(var d = 0; d < dots.length; d++){
         
-        ctx.fillStyle = dots[d].color;
         ctx.beginPath();
         ctx.arc(dots[d].x,dots[d].y,dots[d].size,0,2*Math.PI);
         ctx.fill();
+        ctx.fillStyle = dots[d].color;
     }
 
+    var squares = this.steps[this.steps.length - 1].graph.squares;
+    for(var s = 0; s < squares.length; s++){
+        
+        ctx.fillStyle = squares[s].color;
+        ctx.rect(squares[s].x,squares[s].y,squares[s].size,squares[s].size);
+        ctx.fill();
+    }
 
 
   }

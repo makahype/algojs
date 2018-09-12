@@ -13,6 +13,7 @@ export class AlgoComponent implements OnInit {
   speed = 5;
   playHandle = null;
   playMode = false;
+  end = false;
 
   constructor() {
   }
@@ -21,13 +22,23 @@ export class AlgoComponent implements OnInit {
   }
 
   ngOnChanges(){
+    this.end = false;
     this.algo.clear();
-    this.algo.next();
+    this.algo.next();    
   }
 
-
   next(){
-   this.algo.next();
+    if(this.algo.isDone()){
+        return;
+    }
+
+    this.algo.next();
+    this.end = this.algo.isDone();
+    
+    if(this.end){
+        this.stop();
+    }
+
   }
 
   speedup(){
@@ -37,8 +48,12 @@ export class AlgoComponent implements OnInit {
 
   //automate display of steps based on speed
   play(){
+        if(this.end){
+            return;
+        }
+
         this.playMode = true;
-        this.algo.next();
+        this.next();
         var scope = this;
 
         //do it again depending on the speed

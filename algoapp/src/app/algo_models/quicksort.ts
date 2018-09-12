@@ -13,14 +13,15 @@ export function quicksort(data){
     for(var i=0; i < data.input.length; i++){
         partitions.push(data.input[i].concat([]));
     }
-
     
     var res_arr = [];
+    var end = true;
     for(var i = 0; i < partitions.length; i++){
 
-        //no need to step through array if it only has 
-        //one value
+        //no need to step through array if 
+        //it only has one value
         if(partitions[i].length > 1){
+
             if(partitions[i].length == 2){
                 
                 //seems that below process will not work for
@@ -31,6 +32,9 @@ export function quicksort(data){
                     var hold = partitions[i][0];
                     partitions[i][0] = partitions[i][1];
                     partitions[i][1] = hold;
+                    
+                    //swap occured not done
+                    end = false;
                 }
 
                 res_arr.push(partitions[i]);
@@ -46,6 +50,9 @@ export function quicksort(data){
 
                 //move the pointers
                 while(creating_partition){
+
+                    //swap occured not done
+                    end = false;
 
                     //condition for comparing and moving markers
                     while(leftmark <= rightmark && partitions[i][leftmark] <= pivot){
@@ -70,7 +77,6 @@ export function quicksort(data){
                         var hold = partitions[i][leftmark];
                         partitions[i][leftmark] = partitions[i][rightmark];
                         partitions[i][rightmark] = hold;
-
                     }
                 }
 
@@ -80,7 +86,7 @@ export function quicksort(data){
                 res_arr.push(partitions[i].slice(rightmark+1));
             }
         }else{
-           res_arr.push(partitions[i]);        
+           res_arr.push(partitions[i]);
         }
     }
 
@@ -107,7 +113,9 @@ export function quicksort(data){
     res.show.push(show_arr.slice(0, pivot_point));
     res.show.push({color: 'green', val: show_arr[pivot_point]});
     res.show.push(show_arr.slice(pivot_point+1));
-    
+
+    res.end = end;
+
     //return current state
     return res;
 }

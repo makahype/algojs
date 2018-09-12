@@ -4,13 +4,18 @@ export class Algo {
   process: object;
   start: object;
   steps = [];
+  end = false;
 
   constructor(id: number, name: string, process: object, start: object ) { 
     this.id = id;
     this.name = name;
     this.process = process;
     this.start = start;
+    this.end = false;
+  }
 
+  isDone(){
+    return this.end;
   }
 
   next() {
@@ -26,6 +31,7 @@ export class Algo {
     //run the process for one step and 
     //store the result
     var res = this.process(last);
+    this.end = res.end;
     this.steps.push(res);
 
     //display current state
@@ -78,7 +84,7 @@ export class Algo {
             ctx.fillText(item,10,30+line * 30);
 
             //reset
-            ctx.fillStyle ='black';
+            ctx.fillStyle = 'black';
             line++;
 
         });
@@ -115,22 +121,34 @@ export class Algo {
     //**TODO** standardize visual api for graph representation
     //of algorithm
 
-    /*
-        var last_graph = this.steps[this.steps.length-1].graph;
+    //var last_graph = this.steps[this.steps.length-1].graph;
+    //var canvas = document.getElementById("algo_raster");
+    //var ctx = canvas.getContext("2d");
+    //ctx.beginPath();
+    //ctx.arc(450,100,50,0,2*Math.PI);
+    //ctx.stroke();
+
+    //for(var d = 0; d < last_graph.dots.length; d++){
+    //}
 
 
-        var canvas = document.getElementById("algo_raster");
-        var ctx = canvas.getContext("2d");
+
+    var canvas = document.getElementById("algo_raster");
+    var ctx = canvas.getContext("2d");
+
+    var lines = this.steps[this.steps.length - 1].graph.lines;
+    console.log(lines);
+
+
+    for(var l = 0; l < lines.length; l++){
+
         ctx.beginPath();
-        ctx.arc(450,100,50,0,2*Math.PI);
+        ctx.moveTo(lines[l].to.x,lines[l].to.y);
+        ctx.lineTo(lines[l].from.x,lines[l].from.y);
         ctx.stroke();
+        
+    }
 
-        for(var d = 0; d < last_graph.dots.length; d++){
-        }
-
-        for(var l = 0; d < last_graph.lines.length; l++){
-        }
-    */
 
   }
 

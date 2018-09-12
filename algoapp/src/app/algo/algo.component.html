@@ -20,7 +20,7 @@
             <li (click)="stop()">
                 stop
             </li>
-            <li  (click)="next()">
+            <li  [class.end]="done" (click)="next()">
                 next
             </li>
         </ul>

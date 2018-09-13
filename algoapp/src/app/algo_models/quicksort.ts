@@ -3,7 +3,7 @@
 var quicksort_graph = function(data){
     //** todo represent list of numbers as sequence of circles**//
     //display current order of all partitions
-    return {dots:[], lines:[]};
+    return {dots:[], lines:[], squares:[]};
 }
 
 export function quicksort(data){

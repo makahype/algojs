@@ -1,8 +1,24 @@
+var astar_config = {};
+astar_config.columns = 14;
+astar_config.rows = 14;
+astar_config.goal = {row: 10, col: 12};
+astar_config.start = {row: 0, col: 0};
+astar_config.obstacles = [];
+astar_config.obstacles.push({row: 3, col: 8});
+astar_config.obstacles.push({row: 4, col: 8});
+astar_config.obstacles.push({row: 5, col: 8});
+astar_config.obstacles.push({row: 6, col: 8});
+
+astar_config.obstacles_check = {};
+astar_config.obstacles_check['38']=true;
+astar_config.obstacles_check['48']=true;
+astar_config.obstacles_check['58']=true;
+astar_config.obstacles_check['68']=true;
+
 var astar_graph = function(data){
 
-    var columns = 14;
-    var rows = 14;
-
+    var columns = astar_config.columns;
+    var rows = astar_config.rows;
     var lines = [];
 
     //setup grid as lines
@@ -16,27 +32,27 @@ var astar_graph = function(data){
             from: {x: 680, y: 50 + (r * 20)}});
     }
 
-
     var dots = [];
     data.forEach(function(item){
         dots.push({x: (410 + (item.col*20)), y: ( 60 + (item.row*20)), size: 8, color: 'black'});
     });
     
-
-    var obstacles = [];
-    obstacles.push({row: 3, col: 8});
-    obstacles.push({row: 4, col: 8});
-    obstacles.push({row: 5, col: 8});
-    obstacles.push({row: 6, col: 8});
-
-
+    var obstacles = astar_config.obstacles;
     var squares = [];
     obstacles.forEach(function(item){
         squares.push({x: 401+(20*item.col), y: 51+(20*item.row), size: 17, color: 'red'});
     });
 
-
     return {dots:dots, lines:lines, squares:squares};
+}
+
+var astar_showstructure = function(data){
+    console.log(data);
+    var res = [];
+    data.forEach(function(item){
+        res.push('row:'+item.row+" column:"+item.col);
+    });
+    return res;
 }
 
 //build path
@@ -45,7 +61,6 @@ var reconstructPath = function(result_set, current){
     var res = [];
     var curr;
     var dups = {};
-
 
     for(var key in result_set){
         curr = result_set[key];
@@ -60,7 +75,6 @@ var reconstructPath = function(result_set, current){
     
     //and place the goal at the end
     res.push(current);
-
     return res;
 }
 
@@ -84,19 +98,13 @@ var isInSet = function(set, item){
 
 //get cells next to this cell
 var getNeighbors = function(cell){
+
     //set default rows and columns
-    var columns = 14;
-    var rows = 14;
-
-    var obstacles = {};
-    obstacles['38']=true;
-    obstacles['48']=true;
-    obstacles['58']=true;
-    obstacles['68']=true;
-
-
-
+    var columns = astar_config.columns;
+    var rows = astar_config.rows;
+    var obstacles = astar_config.obstacles_check;
     var res = [];
+
     //create cell if in bounds then add to array
     if(cell.row + 1 < rows){
         res.push({row: cell.row + 1, col: cell.col});
@@ -142,7 +150,6 @@ var getNeighbors = function(cell){
         }
     });
     
-
     return no_obstacles;
 }
 
@@ -185,30 +192,19 @@ var addToSet = function(set, item){
 
 export function astar(data){
 
-
     //graph is a set of nodes and a set of verticies
-    var columns = 14;
-    var rows = 14;
-    var obstacles = [[{row: 4, col: 7}, {row: 5, col:7}, {row: 6, col:7} ],
-                [{row: 5 , col:10},{row: 5, col:11}],
-                [{row: 2, col:4},{row: 2, col:5}]];
-
-
-    var open = [];//data.input.open;
-    var closed = [];//data.input.closed;
-    var goal = {row: 10, col: 12};
-    var start = {row: 0, col: 0};
-
+    var open = [];
+    var closed = [];
+    var goal = astar_config.goal;
+    var start = astar_config.start;
     var cameFrom = {};
     var gScoreSet = {};
     var fScoreSet = {};
+
     open.push(start);
-
-    var res = [];
-
-    //initialize set for start point
     gScoreSet['r'+start.row+'c'+start.col] = 0;
     fScoreSet['r'+start.row+'c'+start.col] = heuristicCostEstimate(start, goal);
+    var res = [];
     
     while(open.length > 0){
 
@@ -250,20 +246,15 @@ export function astar(data){
                 }
             });
 
-
         }
     }
 
-    
-    console.log(res);
-
     res.input =  res;
     res.graph = astar_graph(res);
-    res.show = res; 
+    res.show = astar_showstructure(res);
 
-    //currently only one pass
+    //**TODO**currently only one pass
     res.end = true;
-
 
     return res;
 }

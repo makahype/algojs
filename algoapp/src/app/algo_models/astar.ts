@@ -47,7 +47,6 @@ var astar_graph = function(data){
 }
 
 var astar_showstructure = function(data){
-    console.log(data);
     var res = [];
     data.forEach(function(item){
         res.push('row:'+item.row+" column:"+item.col);

@@ -1,9 +1,29 @@
 
 
 var quicksort_graph = function(data){
-    //** todo represent list of numbers as sequence of circles**//
-    //display current order of all partitions
-    return {dots:[], lines:[], squares:[]};
+
+    console.log(data);
+
+    var dot_items = [];
+    data.input.forEach(function(item, idx){
+        dot_items = dot_items.concat(item);
+    });
+
+    var dots = [];
+    var line = 0;
+    var row = 1;
+    dot_items.forEach(function(item, idx){
+
+        dots.push({x: (410 + (row * 70)), y: ( 60 + (Math.floor(line/3)*80)), size: ((Number.parseInt(item)/2) + 10), color: 'blue'});
+
+        row++;
+        if(row > 3){
+            row = 1;
+        }
+        line++;        
+    });    
+
+    return {dots:dots, lines:[], squares:[]};
 }
 
 export function quicksort(data){
@@ -106,7 +126,7 @@ export function quicksort(data){
     });
     var pivot_point = Math.floor(show_arr.length/2);
 
-    res.graph = quicksort_graph(res.input);
+    res.graph = quicksort_graph(res);
 
     //always display current middle number as global pivot point
     res.show = [];

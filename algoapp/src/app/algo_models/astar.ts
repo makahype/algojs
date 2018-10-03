@@ -8,12 +8,16 @@ astar_config.obstacles.push({row: 3, col: 8});
 astar_config.obstacles.push({row: 4, col: 8});
 astar_config.obstacles.push({row: 5, col: 8});
 astar_config.obstacles.push({row: 6, col: 8});
+astar_config.obstacles.push({row: 7, col: 8});
+astar_config.obstacles.push({row: 8, col: 8});
 
+
+//generate obstacle data for different check system
 astar_config.obstacles_check = {};
-astar_config.obstacles_check['38']=true;
-astar_config.obstacles_check['48']=true;
-astar_config.obstacles_check['58']=true;
-astar_config.obstacles_check['68']=true;
+astar_config.obstacles.forEach(function(item){
+    astar_config.obstacles_check[item.row+''+item.col]=true;
+});
+
 
 var astar_graph = function(data){
 
@@ -33,24 +37,41 @@ var astar_graph = function(data){
     }
 
     var dots = [];
-    data.forEach(function(item){
+
+    //open
+    data.open.forEach(function(item){
+        dots.push({x: (410 + (item.col*20)), y: ( 60 + (item.row*20)), size: 8, color: 'green'});
+    });
+
+    //path
+    data.path.forEach(function(item){
         dots.push({x: (410 + (item.col*20)), y: ( 60 + (item.row*20)), size: 8, color: 'black'});
     });
-    
+
+    //goal
+    dots.push({x: (410 + (astar_config.goal.col*20)), y: ( 60 + (astar_config.goal.row*20)), size: 8, color: 'blue'});
+
+
     var obstacles = astar_config.obstacles;
     var squares = [];
     obstacles.forEach(function(item){
-        squares.push({x: 401+(20*item.col), y: 51+(20*item.row), size: 17, color: 'red'});
+        squares.push({x: 401+(20*item.col), y: 51+(20*item.row), sizex: 17,sizey: 17, color: 'red'});
     });
 
-    return {dots:dots, lines:lines, squares:squares};
+    return {dots:dots, lines:lines, rects:squares};
 }
 
 var astar_showstructure = function(data){
     var res = [];
-    data.forEach(function(item){
+    res.push('open set');
+    data.open.forEach(function(item){
         res.push('row:'+item.row+" column:"+item.col);
     });
+    res.push('closed set');
+    data.closed.forEach(function(item){
+        res.push('row:'+item.row+" column:"+item.col);
+    });
+
     return res;
 }
 
@@ -69,7 +90,6 @@ var reconstructPath = function(result_set, current){
            res.push(curr);
            dups['r'+curr.row+'c'+curr.col] = true;
         }
-
     }
     
     //and place the goal at the end
@@ -92,7 +112,7 @@ var heuristicCostEstimate = function(curr, goal){
 
 //check if item is in the set
 var isInSet = function(set, item){
-    return (set['r'+item.row+'c'+item.col];
+    return (set['r'+item.row+'c'+item.col]);
 }
 
 //get cells next to this cell
@@ -192,20 +212,26 @@ var addToSet = function(set, item){
 export function astar(data){
 
     //graph is a set of nodes and a set of verticies
-    var open = [];
-    var closed = [];
+    var open = data.open;
+    var closed = data.closed;
     var goal = astar_config.goal;
-    var start = astar_config.start;
-    var cameFrom = {};
-    var gScoreSet = {};
-    var fScoreSet = {};
+    var cameFrom = data.cameFrom;
+    var gScoreSet = data.gScoreSet;
+    var fScoreSet = data.fScoreSet;
+    var done = false;
 
-    open.push(start);
-    gScoreSet['r'+start.row+'c'+start.col] = 0;
-    fScoreSet['r'+start.row+'c'+start.col] = heuristicCostEstimate(start, goal);
+    //only do for first run
+    //**TODO** add init function to all algorithms
+    if(data.init){
+        var start = astar_config.start;
+        open.push(start);
+        gScoreSet['r'+start.row+'c'+start.col] = 0;
+        fScoreSet['r'+start.row+'c'+start.col] = heuristicCostEstimate(start, goal);        
+    }
+
     var res = [];
     
-    while(open.length > 0){
+    if(open.length > 0){
 
         var current = lowestF(open, goal);
         if(current.row == goal.row && current.col == goal.col){
@@ -213,6 +239,7 @@ export function astar(data){
 
             //end the loop
             open = [];
+            done = true;
         }else{
 
             open = removeFromSet(open, current);
@@ -248,12 +275,25 @@ export function astar(data){
         }
     }
 
-    res.input =  res;
+
+
+    res = {}
+    res.path = reconstructPath(cameFrom, current);
+    res.open = open;
+    res.closed = closed;
+    res.cameFrom = cameFrom;
+    res.init = false;
+    res.gScoreSet = gScoreSet;
+    res.fScoreSet = fScoreSet;
+    res.end = done;
+    
     res.graph = astar_graph(res);
     res.show = astar_showstructure(res);
 
-    //**TODO**currently only one pass
-    res.end = true;
+    
+    console.log(res);
+    
+
 
     return res;
 }

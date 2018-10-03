@@ -118,8 +118,6 @@ export class Algo {
   
   //process to show visual representation of state
   showGraph(){
-    
-   
 
     var canvas = document.getElementById("algo_raster");
     var ctx = canvas.getContext("2d");
@@ -132,6 +130,10 @@ export class Algo {
         ctx.moveTo(lines[l].to.x,lines[l].to.y);
         ctx.lineTo(lines[l].from.x,lines[l].from.y);
         ctx.stroke();
+
+        //fixes canvas style applying bug
+        ctx.beginPath();
+        ctx.closePath();
         
     }
 
@@ -142,17 +144,18 @@ export class Algo {
         ctx.arc(dots[d].x,dots[d].y,dots[d].size,0,2*Math.PI);
         ctx.fill();
         ctx.closePath();
+
+        //fixes canvas style applying bug
+        ctx.beginPath();
+        ctx.closePath();
     }
 
-    //fixes canvas style applying bug
-    ctx.beginPath();
-    ctx.closePath();
-
-    var squares = this.steps[this.steps.length - 1].graph.squares;
-    for(var s = 0; s < squares.length; s++){        
-        ctx.fillStyle = squares[s].color;
-        ctx.rect(squares[s].x,squares[s].y,squares[s].size,squares[s].size);
+    var rects = this.steps[this.steps.length - 1].graph.rects;
+    for(var s = 0; s < rects.length; s++){        
+        ctx.fillStyle = rects[s].color;
+        ctx.rect(rects[s].x,rects[s].y,rects[s].sizex,rects[s].sizey);
         ctx.fill();
+
     }
 
 

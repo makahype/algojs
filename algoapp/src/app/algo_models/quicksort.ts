@@ -2,28 +2,20 @@
 
 var quicksort_graph = function(data){
 
-    console.log(data);
-
-    var dot_items = [];
+    var rects_items = [];
     data.input.forEach(function(item, idx){
-        dot_items = dot_items.concat(item);
+        rects_items = rects_items.concat(item);
     });
 
-    var dots = [];
+    var rects = [];
     var line = 0;
-    var row = 1;
-    dot_items.forEach(function(item, idx){
+    rects_items.forEach(function(item, idx){
 
-        dots.push({x: (410 + (row * 70)), y: ( 60 + (Math.floor(line/3)*80)), size: ((Number.parseInt(item)/2) + 10), color: 'blue'});
-
-        row++;
-        if(row > 3){
-            row = 1;
-        }
-        line++;        
+        rects.push({x: 410, y: 60 + (line * 30), sizex: (Number.parseInt(item) * 5) , sizey: 15, color: 'blue'});
+        line++;
     });    
 
-    return {dots:dots, lines:[], squares:[]};
+    return {dots:[], lines:[], rects: rects};
 }
 
 export function quicksort(data){

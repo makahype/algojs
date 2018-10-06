@@ -11,7 +11,7 @@ var quicksort_graph = function(data){
     var line = 0;
     rects_items.forEach(function(item, idx){
 
-        rects.push({x: 410, y: 60 + (line * 30), sizex: (Number.parseInt(item) * 5) , sizey: 15, color: 'blue'});
+        rects.push({x: 410, y: 60 + (line * 15), sizex: (Number.parseInt(item) * 3) , sizey: 10, color: 'blue'});
         line++;
     });    
 

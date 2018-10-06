@@ -63,16 +63,24 @@ var astar_graph = function(data){
 
 var astar_showstructure = function(data){
     var res = [];
-    res.push('open set');
-    data.open.forEach(function(item){
-        res.push('row:'+item.row+" column:"+item.col);
-    });
-    res.push('closed set');
-    data.closed.forEach(function(item){
-        res.push('row:'+item.row+" column:"+item.col);
-    });
+    
+    var row = '';
+    var idx = 0;
+    for( var key in data.fScoreSet){
+        if(idx == 3){
+            idx = 0;
+            res.push(row);            
+            row = key + ":" + data.fScoreSet[key] + ", ";
+        }else{
+            idx++;
+            row = row + key + ":" + data.fScoreSet[key] + ", ";
+        }
+    }
+    res.push(row);
 
-    return res;
+    var res_fmt = res.slice(-3);
+    res_fmt.unshift('row[val]column[val]: estimate score');
+    return res_fmt;
 }
 
 //build path

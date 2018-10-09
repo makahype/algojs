@@ -1,89 +1,7 @@
-var astar_config = {};
-astar_config.columns = 14;
-astar_config.rows = 14;
-astar_config.goal = {row: 10, col: 12};
-astar_config.start = {row: 0, col: 0};
-astar_config.obstacles = [];
-astar_config.obstacles.push({row: 3, col: 8});
-astar_config.obstacles.push({row: 4, col: 8});
-astar_config.obstacles.push({row: 5, col: 8});
-astar_config.obstacles.push({row: 6, col: 8});
-astar_config.obstacles.push({row: 7, col: 8});
-astar_config.obstacles.push({row: 8, col: 8});
+import { Algodata } from './algodata';
 
 
-//generate obstacle data for different check system
-astar_config.obstacles_check = {};
-astar_config.obstacles.forEach(function(item){
-    astar_config.obstacles_check[item.row+''+item.col]=true;
-});
-
-
-var astar_graph = function(data){
-
-    var columns = astar_config.columns;
-    var rows = astar_config.rows;
-    var lines = [];
-
-    //setup grid as lines
-    for(var c = 0; c <= columns; c++){
-        lines.push({to:{x: 400+ (c * 20), y: 50},
-            from: {x: 400+ (c * 20), y: 330}});
-    }
-
-    for(var r = 0; r <= rows; r++){
-        lines.push({to:{x: 400, y: 50 + (r * 20)},
-            from: {x: 680, y: 50 + (r * 20)}});
-    }
-
-    var dots = [];
-
-    //open
-    data.open.forEach(function(item){
-        dots.push({x: (410 + (item.col*20)), y: ( 60 + (item.row*20)), size: 8, color: 'green'});
-    });
-
-    //path
-    data.path.forEach(function(item){
-        dots.push({x: (410 + (item.col*20)), y: ( 60 + (item.row*20)), size: 8, color: 'black'});
-    });
-
-    //goal
-    dots.push({x: (410 + (astar_config.goal.col*20)), y: ( 60 + (astar_config.goal.row*20)), size: 8, color: 'blue'});
-
-
-    var obstacles = astar_config.obstacles;
-    var squares = [];
-    obstacles.forEach(function(item){
-        squares.push({x: 401+(20*item.col), y: 51+(20*item.row), sizex: 17,sizey: 17, color: 'red'});
-    });
-
-    return {dots:dots, lines:lines, rects:squares};
-}
-
-var astar_showstructure = function(data){
-    var res = [];
-    
-    var row = '';
-    var idx = 0;
-    for( var key in data.fScoreSet){
-        if(idx == 3){
-            idx = 0;
-            res.push(row);            
-            row = key + ":" + data.fScoreSet[key] + ", ";
-        }else{
-            idx++;
-            row = row + key + ":" + data.fScoreSet[key] + ", ";
-        }
-    }
-    res.push(row);
-
-    var res_fmt = res.slice(-3);
-    res_fmt.unshift('row[val]column[val]: estimate score');
-    return res_fmt;
-}
-
-//build path
+/* algorithim sub processes*/
 var reconstructPath = function(result_set, current){
     
     var res = [];
@@ -112,10 +30,7 @@ var heuristicCostEstimate = function(curr, goal){
     var xval = Math.abs(curr.row - goal.row);
     var yval = Math.abs(curr.col - goal.col);
 
-    if(xval > yval){
-        return xval;
-    }
-    return yval;
+    return yval + xval;
 }
 
 //check if item is in the set
@@ -124,12 +39,12 @@ var isInSet = function(set, item){
 }
 
 //get cells next to this cell
-var getNeighbors = function(cell){
+var getNeighbors = function(cell,context){
 
     //set default rows and columns
-    var columns = astar_config.columns;
-    var rows = astar_config.rows;
-    var obstacles = astar_config.obstacles_check;
+    var columns = context.columns;
+    var rows = context.rows;
+    var obstacles = context.obstacles_check;
     var res = [];
 
     //create cell if in bounds then add to array
@@ -217,12 +132,112 @@ var addToSet = function(set, item){
 }
 
 
-export function astar(data){
+
+
+/* algorithim context*/
+var astar_config = {};
+astar_config.columns = 14;
+astar_config.rows = 14;
+astar_config.goal = {row: 10, col: 12};
+astar_config.start = {row: 0, col: 0};
+astar_config.obstacles = [];
+astar_config.obstacles.push({row: 3, col: 8});
+astar_config.obstacles.push({row: 4, col: 8});
+astar_config.obstacles.push({row: 5, col: 8});
+astar_config.obstacles.push({row: 6, col: 8});
+astar_config.obstacles.push({row: 7, col: 8});
+astar_config.obstacles.push({row: 8, col: 8});
+
+//generate obstacle data for different check system
+astar_config.obstacles_check = {};
+astar_config.obstacles.forEach(function(item){
+    astar_config.obstacles_check[item.row+''+item.col]=true;
+});
+
+
+
+
+/* algorithim processes*/
+var astar = {};
+
+astar.graph = function(data,context){
+
+    var columns = context.columns;
+    var rows = context.rows;
+    var lines = [];
+
+    //setup grid as lines
+    for(var c = 0; c <= columns; c++){
+        lines.push({to:{x: 400+ (c * 20), y: 50},
+            from: {x: 400+ (c * 20), y: 330}});
+    }
+
+    for(var r = 0; r <= rows; r++){
+        lines.push({to:{x: 400, y: 50 + (r * 20)},
+            from: {x: 680, y: 50 + (r * 20)}});
+    }
+
+    var dots = [];
+
+    //open
+    data.open.forEach(function(item){
+        dots.push({x: (410 + (item.col*20)), y: ( 60 + (item.row*20)), size: 8, color: 'green'});
+    });
+
+    //path
+    data.path.forEach(function(item){
+        dots.push({x: (410 + (item.col*20)), y: ( 60 + (item.row*20)), size: 8, color: 'black'});
+    });
+
+    //goal
+    dots.push({x: (410 + (context.goal.col*20)), y: ( 60 + (context.goal.row*20)), size: 8, color: 'blue'});
+
+    var obstacles = context.obstacles;
+    var squares = [];
+    obstacles.forEach(function(item){
+        squares.push({x: 401+(20*item.col), y: 51+(20*item.row), sizex: 17,sizey: 17, color: 'red'});
+    });
+
+    var text = [];
+    for(var c = 0; c < columns; c++){
+        text.push({phrase: c, x: 400 + (c * 20) , y: 40 , size: 12, color: 'black'});
+    }
+
+    for(var r = 0; r < rows; r++){
+        text.push({phrase: r, x: 380 , y: 65 + (r * 20) , size: 12, color: 'black'});
+    }
+
+    return {dots:dots, lines:lines, rects:squares, text:text};
+}
+
+astar.show = function(data,context){
+    var res = [];
+    
+    var row = '';
+    var idx = 0;
+    for( var key in data.fScoreSet){
+        if(idx == 2){
+            idx = 0;
+            res.push(row);            
+            row = key + ": " + data.fScoreSet[key] + ", ";
+        }else{
+            idx++;
+            row = row + key + ": " + data.fScoreSet[key] + ", ";
+        }
+    }
+    res.push(row);
+
+    var res_fmt = res.slice(-3);
+    res_fmt.unshift('row[val]column[val]: estimate score');
+    return res_fmt;
+}
+
+astar.algo = function(data,context){
 
     //graph is a set of nodes and a set of verticies
     var open = data.open;
     var closed = data.closed;
-    var goal = astar_config.goal;
+    var goal = context.goal;
     var cameFrom = data.cameFrom;
     var gScoreSet = data.gScoreSet;
     var fScoreSet = data.fScoreSet;
@@ -231,7 +246,7 @@ export function astar(data){
     //only do for first run
     //**TODO** add init function to all algorithms
     if(data.init){
-        var start = astar_config.start;
+        var start = context.start;
         open.push(start);
         gScoreSet['r'+start.row+'c'+start.col] = 0;
         fScoreSet['r'+start.row+'c'+start.col] = heuristicCostEstimate(start, goal);        
@@ -252,7 +267,7 @@ export function astar(data){
 
             open = removeFromSet(open, current);
             closed = addToSet(closed, current);
-            var neighbors = getNeighbors(current);
+            var neighbors = getNeighbors(current,context);
 
             neighbors.forEach(function(item){
 
@@ -283,8 +298,6 @@ export function astar(data){
         }
     }
 
-
-
     res = {}
     res.path = reconstructPath(cameFrom, current);
     res.open = open;
@@ -294,14 +307,14 @@ export function astar(data){
     res.gScoreSet = gScoreSet;
     res.fScoreSet = fScoreSet;
     res.end = done;
-    
-    res.graph = astar_graph(res);
-    res.show = astar_showstructure(res);
-
-    
-    console.log(res);
-    
-
 
     return res;
 }
+
+astar.done = function(data){
+    return false;
+}
+
+
+var astar_process =  new Algodata({},astar,astar_config);
+export {astar_process}

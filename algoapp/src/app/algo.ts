@@ -1,3 +1,5 @@
+import { Algodata } from './algo_models/algodata';
+
 export class Algo {
   id: number;
   name: string;
@@ -6,11 +8,12 @@ export class Algo {
   steps = [];
   end = false;
 
-  constructor(id: number, name: string, process: object, start: object ) { 
+  constructor(id: number, name: string, process: Algodata, start: object ) { 
     this.id = id;
     this.name = name;
     this.process = process;
     this.start = start;
+    this.process.setState(start);
     this.end = false;
   }
 
@@ -19,19 +22,8 @@ export class Algo {
   }
 
   next() {
-
-    //either use data from last process run or use the
-    //start data set
-    if(this.steps.length > 0){
-        var last = this.steps[this.steps.length - 1];
-    }else{
-        var last = this.start;
-    }
-    
-    //run the process for one step and 
-    //store the result
-    var res = this.process(last);
-    this.end = res.end;
+    var res = this.process.processState();
+    this.end = this.process.isComplete();
     this.steps.push(res);
 
     //display current state
@@ -40,6 +32,7 @@ export class Algo {
 
   clear(){
     this.steps = [];
+    this.process.setState(this.start);
   }
 
   visualize() {
@@ -87,7 +80,6 @@ export class Algo {
             //reset
             ctx.fillStyle = 'black';
             line++;
-
         });
 
         //make sure next part is drawn in the next canvas
@@ -95,8 +87,8 @@ export class Algo {
         section++;
     }
 
-    //display state for previous or first step    
-    var step1 = this.steps[this.steps.length - 1];        
+    //display state for previous or first step
+    var step1 = this.steps[this.steps.length - 1];
     var show = step1.show;
     ctx.fillText("step "+this.steps.length,10,(section * 200)+30);
 
@@ -113,9 +105,8 @@ export class Algo {
         ctx.fillStyle = 'black';
         line++;
     });
-
   }
-  
+
   //process to show visual representation of state
   showGraph(){
 
@@ -134,7 +125,6 @@ export class Algo {
         //fixes canvas style applying bug
         ctx.beginPath();
         ctx.closePath();
-        
     }
 
     var dots = this.steps[this.steps.length - 1].graph.dots;
@@ -151,14 +141,18 @@ export class Algo {
     }
 
     var rects = this.steps[this.steps.length - 1].graph.rects;
-    for(var s = 0; s < rects.length; s++){        
+    for(var s = 0; s < rects.length; s++){
         ctx.fillStyle = rects[s].color;
         ctx.rect(rects[s].x,rects[s].y,rects[s].sizex,rects[s].sizey);
         ctx.fill();
-
     }
 
-
+    var text = this.steps[this.steps.length - 1].graph.text;
+    for(var s = 0; s < text.length; s++){
+        ctx.fillStyle = text[s].color;
+        ctx.font = text[s].size+"px Arial";
+        ctx.fillText(text[s].phrase,text[s].x,text[s].y);
+    }
 
   }
 

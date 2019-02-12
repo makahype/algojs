@@ -3,7 +3,7 @@ import { Algodata } from './algo_models/algodata';
 export class Algo {
   id: number;
   name: string;
-  process: object;
+  process: Algodata;
   start: object;
   steps = [];
   end = false;
@@ -43,7 +43,7 @@ export class Algo {
   //process to display data structure and data
   showStructure() {
 
-    var canvas = document.getElementById("algo_raster");
+    var canvas : any = document.getElementById("algo_raster");
     var ctx = canvas.getContext("2d");
 
     //clear for new input
@@ -110,7 +110,7 @@ export class Algo {
   //process to show visual representation of state
   showGraph(){
 
-    var canvas = document.getElementById("algo_raster");
+    var canvas : any = document.getElementById("algo_raster");
     var ctx = canvas.getContext("2d");
     ctx.fillStyle = 'black';
 

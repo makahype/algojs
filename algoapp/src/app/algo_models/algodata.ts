@@ -1,6 +1,10 @@
 export class Algodata {
     state = {};
-    processes = {};
+    processes : any = {
+            show  :function(){},
+            graph :function(){},
+            algo  : function(){}
+    };
     context = {};
 
     constructor(state: object, processes: object, context: object ) { 
@@ -16,7 +20,7 @@ export class Algodata {
     processState(){
         this.state = this.processes.algo(this.state, this.context);
 
-        var res = {};
+        var res : any = {};
         res.show = this.processes.show(this.state, this.context);
         res.graph = this.processes.graph(this.state, this.context);
         return res;

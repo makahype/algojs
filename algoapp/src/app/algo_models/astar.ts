@@ -135,7 +135,7 @@ var addToSet = function(set, item){
 
 
 /* algorithim context*/
-var astar_config = {};
+var astar_config : any = {};
 astar_config.columns = 14;
 astar_config.rows = 14;
 astar_config.goal = {row: 10, col: 12};
@@ -158,7 +158,7 @@ astar_config.obstacles.forEach(function(item){
 
 
 /* algorithim processes*/
-var astar = {};
+var astar : any = {};
 
 astar.graph = function(data,context){
 
@@ -252,7 +252,7 @@ astar.algo = function(data,context){
         fScoreSet['r'+start.row+'c'+start.col] = heuristicCostEstimate(start, goal);        
     }
 
-    var res = [];
+    var res : any = [];
     
     if(open.length > 0){
 
@@ -298,7 +298,7 @@ astar.algo = function(data,context){
         }
     }
 
-    res = {}
+    res = {};
     res.path = reconstructPath(cameFrom, current);
     res.open = open;
     res.closed = closed;

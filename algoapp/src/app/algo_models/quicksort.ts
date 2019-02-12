@@ -1,7 +1,7 @@
 import { Algodata } from './algodata';
 
 
-var quicksort = {};
+var quicksort : any = {};
 quicksort.show  = function(data, context){
 
     var res = [];
@@ -143,7 +143,7 @@ quicksort.algo = function(data, context){
         }
     }
 
-    var res = {};
+    var res : any = {};
     res.input = [];
     //remove empty arrays
     for(var i = 0; i < res_arr.length; i++){

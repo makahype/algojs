@@ -1,11 +1,17 @@
 import { Algodata } from './algo_models/algodata';
 
+type AlgoStepState = {
+    show: any; //show state data
+    graph: any; //generate graph representation
+}
+
+
 export class Algo {
   id: number;
   name: string;
   process: Algodata;
   start: object;
-  steps = [];
+  steps : Array<AlgoStepState>= [];
   end = false;
 
   constructor(id: number, name: string, process: Algodata, start: object ) { 
@@ -17,7 +23,7 @@ export class Algo {
     this.end = false;
   }
 
-  isDone(){
+  isDone() {
     return this.end;
   }
 
@@ -30,7 +36,7 @@ export class Algo {
     this.visualize();
   }
 
-  clear(){
+  clear() {
     this.steps = [];
     this.process.setState(this.start);
   }
@@ -145,6 +151,10 @@ export class Algo {
         ctx.fillStyle = rects[s].color;
         ctx.rect(rects[s].x,rects[s].y,rects[s].sizex,rects[s].sizey);
         ctx.fill();
+
+        //fixes canvas style applying bug
+        ctx.beginPath();
+        ctx.closePath();
     }
 
     var text = this.steps[this.steps.length - 1].graph.text;
@@ -152,6 +162,10 @@ export class Algo {
         ctx.fillStyle = text[s].color;
         ctx.font = text[s].size+"px Arial";
         ctx.fillText(text[s].phrase,text[s].x,text[s].y);
+
+        //fixes canvas style applying bug
+        ctx.beginPath();
+        ctx.closePath();
     }
 
   }

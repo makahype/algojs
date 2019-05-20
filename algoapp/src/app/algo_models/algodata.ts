@@ -1,13 +1,28 @@
-export class Algodata {
-    state = {};
-    processes : any = {
-            show  :function(){},
-            graph :function(){},
-            algo  : function(){}
-    };
-    context = {};
+/****
+    This is a very general structure , a shell to take in 
+    any algorithm and interface with the rest of the application
+    by supplying different data representations and a way to step 
+    through the algorithm
+****/
 
-    constructor(state: object, processes: object, context: object ) { 
+type GenericAlgo = {
+    algo: any;  //make algorithm calculations
+    done: any;  //determine if algorithm is finished
+    show: any; //show state data
+    graph: any; //generate graph representation
+}
+
+export class Algodata {
+    state : object = {}; //current process state
+    context : object = {}; //environment
+    processes : GenericAlgo = {
+        show  : function(){},
+        graph : function(){},
+        algo  : function(){},
+        done  : function(){}
+    };
+
+    constructor(state: object, processes: GenericAlgo, context: object ) { 
         this.state = state;
         this.processes = processes;
         this.context = context;
@@ -20,9 +35,11 @@ export class Algodata {
     processState(){
         this.state = this.processes.algo(this.state, this.context);
 
+        //generate state representation
         var res : any = {};
         res.show = this.processes.show(this.state, this.context);
         res.graph = this.processes.graph(this.state, this.context);
+
         return res;
     }
 

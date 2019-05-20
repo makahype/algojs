@@ -1,7 +1,11 @@
 import { Algodata } from './algodata';
 
 
-/* algorithim sub processes*/
+//***********
+// helper functions
+//***********
+
+//build the path that has currently been traveled with no duplicates
 var reconstructPath = function(result_set, current){
     
     var res = [];
@@ -35,7 +39,8 @@ var heuristicCostEstimate = function(curr, goal){
 
 //check if item is in the set
 var isInSet = function(set, item){
-    return (set['r'+item.row+'c'+item.col]);
+    var id = 'r' + item.row + 'c' + item.col;
+    return (set[id]);
 }
 
 //get cells next to this cell
@@ -81,13 +86,10 @@ var getNeighbors = function(cell,context){
         res.push({row: cell.row - 1, col: cell.col - 1});
     }
 
-    //remove obstacles
+    //remove obstacles form list
     var no_obstacles = [];
     res.forEach(function(item){
-        if(obstacles[item.row+""+item.col]){
-            //dont add it to the result 
-            //is a cell with an obstacle
-        }else{
+        if(!obstacles[item.row+""+item.col]){
             no_obstacles.push(item);
         }
     });
@@ -95,14 +97,20 @@ var getNeighbors = function(cell,context){
     return no_obstacles;
 }
 
-//get the item with the lowest cost estimate to the goal
-var lowestF = function(openset,goal){
+//get the cell with the lowest cost estimate to the goal
+var lowestF = function(openset, goal){
+    
+    var minval = 100000;//a generic bounding value 
+    var current_val;
+    var res :any = {};
 
-    var minval = 100000;
-    var res = openset[0];
     openset.forEach(function(item){
-        if(minval > heuristicCostEstimate(item, goal)){
-            minval = heuristicCostEstimate(item, goal);
+        //calculate cost for the current item
+        current_val = heuristicCostEstimate(item, goal);
+
+        //if smallest value then make this the cell
+        if(minval > current_val){
+            minval = current_val;
             res = item;
         }
     });
@@ -115,9 +123,7 @@ var removeFromSet = function(set, remove_item){
 
     var res = [];
     set.forEach(function(item){
-        if(item.row == remove_item.row && item.col == remove_item.col){
-            //dont add
-        }else{
+        if(!(item.row == remove_item.row && item.col == remove_item.col)){
            res.push(item);
         }
     });
@@ -134,71 +140,194 @@ var addToSet = function(set, item){
 
 
 
-/* algorithim context*/
-var astar_config : any = {};
-astar_config.columns = 14;
-astar_config.rows = 14;
-astar_config.goal = {row: 10, col: 12};
-astar_config.start = {row: 0, col: 0};
-astar_config.obstacles = [];
-astar_config.obstacles.push({row: 3, col: 8});
-astar_config.obstacles.push({row: 4, col: 8});
-astar_config.obstacles.push({row: 5, col: 8});
-astar_config.obstacles.push({row: 6, col: 8});
-astar_config.obstacles.push({row: 7, col: 8});
-astar_config.obstacles.push({row: 8, col: 8});
+//***********
+// algo context/environment
+//***********
+var astar_env : any = {};
+astar_env.columns = 14;
+astar_env.rows = 14;
+astar_env.goal = {row: 10, col: 12};
+astar_env.start = {row: 0, col: 0};
+astar_env.obstacles = [];
+astar_env.obstacles.push({row: 3, col: 8});
+astar_env.obstacles.push({row: 4, col: 8});
+astar_env.obstacles.push({row: 5, col: 8});
+astar_env.obstacles.push({row: 6, col: 8});
+astar_env.obstacles.push({row: 7, col: 8});
+astar_env.obstacles.push({row: 8, col: 8});
 
-//generate obstacle data for different check system
-astar_config.obstacles_check = {};
-astar_config.obstacles.forEach(function(item){
-    astar_config.obstacles_check[item.row+''+item.col]=true;
+//format obstacle data for the check system
+astar_env.obstacles_check = {};
+astar_env.obstacles.forEach(function(item){
+    astar_env.obstacles_check[item.row+''+item.col]=true;
 });
 
 
 
 
-/* algorithim processes*/
+//***********
+// Algo Core
+//***********
 var astar : any = {};
 
-astar.graph = function(data,context){
+astar.algo = function(data, context){
 
+    //graph is a set of nodes and a set of verticies
+    var open = data.open;
+    var closed = data.closed;
+    var goal = context.goal;
+    var cameFrom = data.cameFrom;
+    var gScoreSet = data.gScoreSet;
+    var fScoreSet = data.fScoreSet;
+    var done = false;
+
+    //no open cells, only do for first run
+    if(open.length == 0){
+        var start = context.start;
+        open.push(start);
+        gScoreSet['r'+start.row+'c'+start.col] = 0;
+        fScoreSet['r'+start.row+'c'+start.col] = heuristicCostEstimate(start, goal);        
+    }
+
+   
+    //if cell with lowest estimate is the goal then we are done
+    var current = lowestF(open, goal);
+
+    if(current.row == goal.row && current.col == goal.col){
+        res = reconstructPath(cameFrom, current);
+
+        //end the loop
+        done = true;
+    }else{
+
+        //remove from visited set and add to closed set
+        //so we dont attempt to revisit
+        open = removeFromSet(open, current);
+        closed = addToSet(closed, current);
+
+        //get neighbors of currently visited cell
+        var neighbors = getNeighbors(current,context);
+        neighbors.forEach(function(cell){
+
+            //if it is in the closed set then we do not want to 
+            //estimate the score again
+            if(!isInSet(closed, cell)){
+
+                var cell_id = 'r'+cell.row+'c'+cell.col;
+                var gScore = gScoreSet['r'+current.row+'c'+current.col] + 1;
+
+                if(!isInSet(open, cell)){
+
+                   open =  addToSet(open, cell);
+
+                }else if(gScoreSet[cell_id] && (gScore >= gScoreSet[cell_id])){
+
+                    //do nothing , seems like going back to a previous neighbor
+                    //TODO: confusing part of algorithm as removing this part does nothing
+                    //should investigate
+                }
+
+                //either gScore has not been set for this neighbor or 
+                //it is a value that seems to be efficient, store it
+                if(!gScoreSet[cell_id] || (gScore < gScoreSet[cell_id])){
+                    cameFrom[cell_id] = current;
+                    gScoreSet[cell_id] = gScore;
+                    fScoreSet[cell_id] = gScoreSet[cell_id] + heuristicCostEstimate(cell, goal);
+                }
+            }
+        });
+
+    }
+
+    //build and return new state
+    var res : any = {};
+    res.path = reconstructPath(cameFrom, current);
+    res.open = open;
+    res.closed = closed;
+    res.cameFrom = cameFrom;
+    res.init = false;
+    res.gScoreSet = gScoreSet;
+    res.fScoreSet = fScoreSet;
+    res.end = done;
+
+    return res;
+}
+
+astar.done = function(data){
+    return data.done;
+}
+
+astar.graph = function(data,context){
+    //graph 400 x 700
+    var x_start = 400;
+    var x_end = 680;
+    var y_start = 50;
+    var y_end = 330;
+
+    //result sets
+    var lines = [];
+    var dots = [];
+    var squares = [];
+    var text = [];
+
+    //grid , vertical and horizontal lines
     var columns = context.columns;
     var rows = context.rows;
-    var lines = [];
 
-    //setup grid as lines
+    var line_obj = {};
     for(var c = 0; c <= columns; c++){
-        lines.push({to:{x: 400+ (c * 20), y: 50},
-            from: {x: 400+ (c * 20), y: 330}});
+        line_obj = {to: {x: x_start + (c * 20), y: y_start},
+                    from: {x: x_start + (c * 20), y: y_end}
+                    };
+        lines.push(line_obj);
     }
 
     for(var r = 0; r <= rows; r++){
-        lines.push({to:{x: 400, y: 50 + (r * 20)},
-            from: {x: 680, y: 50 + (r * 20)}});
+        line_obj = {to: {x: x_start, y: y_start + (r * 20)},
+                    from: {x: x_end, y: y_start + (r * 20)}
+                    };
+        lines.push(line_obj);
     }
 
-    var dots = [];
-
+    //circles representing position
+    var dot_x_offset = 10 + x_start;
+    var dot_y_offset = 10 + y_start;
+    
     //open
     data.open.forEach(function(item){
-        dots.push({x: (410 + (item.col*20)), y: ( 60 + (item.row*20)), size: 8, color: 'green'});
+        dots.push({x: (dot_x_offset + (item.col*20)), 
+                y: ( dot_y_offset + (item.row*20)), 
+                size: 8, 
+                color: 'green'});
     });
 
     //path
     data.path.forEach(function(item){
-        dots.push({x: (410 + (item.col*20)), y: ( 60 + (item.row*20)), size: 8, color: 'black'});
+        dots.push({x: (dot_x_offset + (item.col*20)), 
+                    y: ( dot_y_offset + (item.row*20)),
+                    size: 8, 
+                    color: 'black'});
     });
 
     //goal
-    dots.push({x: (410 + (context.goal.col*20)), y: ( 60 + (context.goal.row*20)), size: 8, color: 'blue'});
+    dots.push({x: (dot_x_offset + (context.goal.col*20)), 
+                y: ( dot_y_offset + (context.goal.row*20)), 
+                size: 8, 
+                color: 'blue'});
 
+    //obstacles
+    var obc_x_offset = 1 + x_start;
+    var obc_y_offset = 1 + y_start;
     var obstacles = context.obstacles;
-    var squares = [];
     obstacles.forEach(function(item){
-        squares.push({x: 401+(20*item.col), y: 51+(20*item.row), sizex: 17,sizey: 17, color: 'red'});
+        squares.push({x: obc_x_offset+(20*item.col),
+                    y: obc_y_offset+(20*item.row), 
+                    sizex: 17,
+                    sizey: 17, 
+                    color: 'red'});
     });
 
-    var text = [];
+    //grid key
     for(var c = 0; c < columns; c++){
         text.push({phrase: c, x: 400 + (c * 20) , y: 40 , size: 12, color: 'black'});
     }
@@ -207,7 +336,7 @@ astar.graph = function(data,context){
         text.push({phrase: r, x: 380 , y: 65 + (r * 20) , size: 12, color: 'black'});
     }
 
-    return {dots:dots, lines:lines, rects:squares, text:text};
+    return {dots: dots, lines: lines, rects: squares, text: text};
 }
 
 astar.show = function(data,context){
@@ -232,89 +361,8 @@ astar.show = function(data,context){
     return res_fmt;
 }
 
-astar.algo = function(data,context){
-
-    //graph is a set of nodes and a set of verticies
-    var open = data.open;
-    var closed = data.closed;
-    var goal = context.goal;
-    var cameFrom = data.cameFrom;
-    var gScoreSet = data.gScoreSet;
-    var fScoreSet = data.fScoreSet;
-    var done = false;
-
-    //only do for first run
-    //**TODO** add init function to all algorithms
-    if(data.init){
-        var start = context.start;
-        open.push(start);
-        gScoreSet['r'+start.row+'c'+start.col] = 0;
-        fScoreSet['r'+start.row+'c'+start.col] = heuristicCostEstimate(start, goal);        
-    }
-
-    var res : any = [];
-    
-    if(open.length > 0){
-
-        var current = lowestF(open, goal);
-        if(current.row == goal.row && current.col == goal.col){
-            res = reconstructPath(cameFrom, current);
-
-            //end the loop
-            open = [];
-            done = true;
-        }else{
-
-            open = removeFromSet(open, current);
-            closed = addToSet(closed, current);
-            var neighbors = getNeighbors(current,context);
-
-            neighbors.forEach(function(item){
-
-                //if it is in the closed set then do nothing
-                if(!isInSet(closed, item)){
-
-                    var gScore = gScoreSet['r'+current.row+'c'+current.col] + 1;
-
-                    if(!isInSet(open, item)){
-
-                       open =  addToSet(open, item);
-
-                    }else if(gScoreSet['r'+item.row+'c'+item.col] && (gScore >= gScoreSet['r'+item.row+'c'+item.col])){
-
-                        //do nothing , seems like going back to a previous neighbor
-                    }
-
-                    //either gScore has not been set for this neighbor or 
-                    //it is a value that seems to be efficient, store it
-                    if(!gScoreSet['r'+item.row+'c'+item.col] || (gScore < gScoreSet['r'+item.row+'c'+item.col])){
-                        cameFrom['r'+item.row+'c'+item.col] = current;
-                        gScoreSet['r'+item.row+'c'+item.col] = gScore;
-                        fScoreSet['r'+item.row+'c'+item.col] = gScoreSet['r'+item.row+'c'+item.col] + heuristicCostEstimate(item, goal);
-                    }
-                }
-            });
-
-        }
-    }
-
-    res = {};
-    res.path = reconstructPath(cameFrom, current);
-    res.open = open;
-    res.closed = closed;
-    res.cameFrom = cameFrom;
-    res.init = false;
-    res.gScoreSet = gScoreSet;
-    res.fScoreSet = fScoreSet;
-    res.end = done;
-
-    return res;
-}
-
-astar.done = function(data){
-    return false;
-}
 
 
-var astar_process =  new Algodata({},astar,astar_config);
+//encapsulate specific context and process
+var astar_process =  new Algodata({},astar,astar_env);
 export {astar_process}

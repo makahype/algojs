@@ -32,7 +32,18 @@ quicksort.graph = function(data, context){
     var line = 0;
     rects_items.forEach(function(item, idx){
 
-        rects.push({x: 420, y: 20 + (line * 15), sizex: (Number.parseInt(item) * 3) , sizey: 10, color: 'blue'});
+        //if this is a time that the value becomes a pivot
+        //display it at green
+
+        console.log(data.swaps);
+        if( data.swaps.includes('(pivot '+item+') ')){
+            var color = 'green';
+        }else{
+            var color = 'blue';
+        }
+
+        rects.push({x: 420, y: 20 + (line * 15), sizex: (Number.parseInt(item) * 3) , sizey: 10, color: color});
+
         line++;
     });
 
@@ -60,7 +71,6 @@ quicksort.algo = function(data, context){
     
     //record the swaps that occured
     var swaps = [];
-
     
     var res_arr = [];
     var end = true;
@@ -152,7 +162,6 @@ quicksort.algo = function(data, context){
         }
     }
 
-    //res.graph = quicksort_graph(res);
     res.swaps = swaps;
     res.end = end;
 

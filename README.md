@@ -8,19 +8,21 @@ at each step.
 - algorithm display on the right:
     - see the last two steps in the algorithm process
     - data display , textual display of organization of key data in the algorithm
-    - graph display **TODO** visual representation of data
+    - graph display visual representation of data
     - buttons to step forward and backward in the process or to automate the running of the 
     process. 
     
 ## local testing
 * cd into algoapp
 * ng serve --open
+* see at: http://highendlogic.com/algoapp
 
 ## TODOS
-* clear up errors in build
+* general code cleanup
+* add more types and share types across application
+* standard canvas interface
+* add algorithm explinations
 * revisit quick sort visualization and example
 * revisit A* visiulation and example
 * create 3d rendering and web worker example (john resig)
-* create views for different size screens
-* create a machine learning algorithm
 * create a visual algorithm to turn a circle in to a square (like flash)

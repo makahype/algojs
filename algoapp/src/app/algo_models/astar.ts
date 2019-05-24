@@ -6,7 +6,7 @@ import { Algodata } from './algodata';
 //***********
 
 //build the path that has currently been traveled with no duplicates
-var reconstructPath = function(result_set, current){
+var reconstruct_path = function(result_set, current){
     
     var res = [];
     var curr;
@@ -29,7 +29,7 @@ var reconstructPath = function(result_set, current){
 
 
 //eight way heuristic diagonal
-var heuristicCostEstimate = function(curr, goal){
+var heuris_cost_est = function(curr, goal){
 
     var xval = Math.abs(curr.row - goal.row);
     var yval = Math.abs(curr.col - goal.col);
@@ -38,13 +38,13 @@ var heuristicCostEstimate = function(curr, goal){
 }
 
 //check if item is in the set
-var isInSet = function(set, item){
+var is_in_set = function(set, item){
     var id = 'r' + item.row + 'c' + item.col;
     return (set[id]);
 }
 
 //get cells next to this cell
-var getNeighbors = function(cell,context){
+var get_neigh = function(cell,context){
 
     //set default rows and columns
     var columns = context.columns;
@@ -98,7 +98,7 @@ var getNeighbors = function(cell,context){
 }
 
 //get the cell with the lowest cost estimate to the goal
-var lowestF = function(openset, goal){
+var low_f_cell = function(openset, goal){
     
     var minval = 100000;//a generic bounding value 
     var current_val;
@@ -106,7 +106,7 @@ var lowestF = function(openset, goal){
 
     openset.forEach(function(item){
         //calculate cost for the current item
-        current_val = heuristicCostEstimate(item, goal);
+        current_val = heuris_cost_est(item, goal);
 
         //if smallest value then make this the cell
         if(minval > current_val){
@@ -119,7 +119,7 @@ var lowestF = function(openset, goal){
 }
 
 //remove an item from the set
-var removeFromSet = function(set, remove_item){
+var remove_frm_set = function(set, remove_item){
 
     var res = [];
     set.forEach(function(item){
@@ -132,7 +132,7 @@ var removeFromSet = function(set, remove_item){
 }
 
 //add an item to the set
-var addToSet = function(set, item){
+var add_to_set = function(set, item){
     set.push(item);
     return set;
 }
@@ -186,15 +186,15 @@ astar.algo = function(data, context){
         var start = context.start;
         open.push(start);
         gScoreSet['r'+start.row+'c'+start.col] = 0;
-        fScoreSet['r'+start.row+'c'+start.col] = heuristicCostEstimate(start, goal);        
+        fScoreSet['r'+start.row+'c'+start.col] = heuris_cost_est(start, goal);        
     }
 
    
     //if cell with lowest estimate is the goal then we are done
-    var current = lowestF(open, goal);
+    var current = low_f_cell(open, goal);
 
     if(current.row == goal.row && current.col == goal.col){
-        res = reconstructPath(cameFrom, current);
+        res = reconstruct_path(cameFrom, current);
 
         //end the loop
         done = true;
@@ -202,23 +202,23 @@ astar.algo = function(data, context){
 
         //remove from visited set and add to closed set
         //so we dont attempt to revisit
-        open = removeFromSet(open, current);
-        closed = addToSet(closed, current);
+        open = remove_frm_set(open, current);
+        closed = add_to_set(closed, current);
 
         //get neighbors of currently visited cell
-        var neighbors = getNeighbors(current,context);
+        var neighbors = get_neigh(current,context);
         neighbors.forEach(function(cell){
 
             //if it is in the closed set then we do not want to 
             //estimate the score again
-            if(!isInSet(closed, cell)){
+            if(!is_in_set(closed, cell)){
 
                 var cell_id = 'r'+cell.row+'c'+cell.col;
                 var gScore = gScoreSet['r'+current.row+'c'+current.col] + 1;
 
-                if(!isInSet(open, cell)){
+                if(!is_in_set(open, cell)){
 
-                   open =  addToSet(open, cell);
+                   open =  add_to_set(open, cell);
 
                 }else if(gScoreSet[cell_id] && (gScore >= gScoreSet[cell_id])){
 
@@ -232,7 +232,7 @@ astar.algo = function(data, context){
                 if(!gScoreSet[cell_id] || (gScore < gScoreSet[cell_id])){
                     cameFrom[cell_id] = current;
                     gScoreSet[cell_id] = gScore;
-                    fScoreSet[cell_id] = gScoreSet[cell_id] + heuristicCostEstimate(cell, goal);
+                    fScoreSet[cell_id] = gScoreSet[cell_id] + heuris_cost_est(cell, goal);
                 }
             }
         });
@@ -241,7 +241,7 @@ astar.algo = function(data, context){
 
     //build and return new state
     var res : any = {};
-    res.path = reconstructPath(cameFrom, current);
+    res.path = reconstruct_path(cameFrom, current);
     res.open = open;
     res.closed = closed;
     res.cameFrom = cameFrom;
